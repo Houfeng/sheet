@@ -1,0 +1,122 @@
+.sheet {
+  //基础样式
+  &,
+  & * {
+    box-sizing: border-box;
+  }
+  background: #fff;
+  box-shadow: 0 0 8px 1px #ddd;
+  min-height: 300px;
+  min-width: 600px;
+  position: relative;
+  overflow: hidden;
+  @borderColor: rgba( 221, 221, 221, .85);
+  @border: 1px solid @borderColor;
+  border: @border;
+  @fontSize: 12px;
+  @font-family: 'Arial, Helvetica, sans-serif';
+  table {
+    table-layout: fixed;
+    border-collapse: collapse;
+    width: -mox-min-content;
+    height: -mox-min-content;
+    width: min-content;
+    height: min-content;
+    position: relative;
+    th,
+    td {
+      position: relative;
+      font-weight: normal;
+      font-family: @font-family;
+      font-size: @fontSize;
+      padding: 0;
+      user-select: none;
+      cursor: default;
+      overflow: hidden;
+    }
+  }
+  @barSize: 28px;
+  .bar {
+    background: rgb(248, 248, 248);
+    text-transform: uppercase;
+    user-select: none;
+    z-index: 10;
+    th {
+      padding: 0 3px;
+      font-weight: 600;
+      color: rgba( 25, 25, 25, .75);
+    }
+  }
+  .bar-columns {
+    table {
+      height: 100%;
+      th {
+        text-align: center;
+        height: @barSize;
+        border-right: @border;
+        border-left: @border;
+      }
+    }
+    height: @barSize;
+  }
+  .bar-side {
+    width: @barSize * 1.5;
+    .bar-all {
+      height: @barSize;
+      text-align: center;
+      z-index: 20;
+    }
+    .bar-rows {
+      text-align: right;
+      table {
+        width: 100%;
+        th {
+          height: @barSize;
+          border-top: @border;
+          border-bottom: @border;
+        }
+      }
+    }
+  }
+  .cells {
+    table {
+      td {
+        border: 1px solid @borderColor;
+        cursor: cell;
+        word-break: keep-all;
+        white-space: nowrap;
+        &.editing {
+          overflow: visible;
+          padding: 0;
+        }
+        &.selected {
+          background: rgba(175, 222, 254, 0.2);
+        }
+        .text,
+        .input {
+          font-family: @font-family;
+          font-size: @fontSize;
+          padding: 0 3px;
+          width: 100%;
+          height: 100%;
+          margin: 0;
+          border: 0;
+        }
+        .input {
+          display: block;
+          padding: 3px;
+          outline-offset: 0;
+          outline-style: outset;
+          outline: solid 1px rgba(8, 142, 231, .85);
+          resize: none;
+        }
+      }
+    }
+  }
+  .bar-columns,
+  .bar-rows {
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}

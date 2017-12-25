@@ -1,0 +1,24 @@
+{
+  "name": "sheet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "dn test && dn build -e prod"
+  },
+  "author": {
+    "name": "Houfeng",
+    "email": "admin@xhou.net",
+    "url": "http://houfeng.net"
+  },
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "classnames": "^2.2.5",
+    "mota": "^0.2.16",
+    "ntils": "^3.1.11",
+    "react": "^16.2.0",
+    "react-dock-panel": "^1.0.5",
+    "react-dom": "^16.2.0"
+  }
+}
