@@ -6,7 +6,7 @@ export default class Cell {
   editing = false;
   type = DataType.string;
 
-  constructor(grid, row, column, opts) {
+  constructor(grid, column, row, opts) {
     this.__grid = grid;
     this.__row = row;
     this.__column = column;

@@ -21,10 +21,6 @@ export default class Cell extends Component {
     }
   }
 
-  convertEndLine(str) {
-    return str.split('\n').join('<br/>');
-  }
-
   render() {
     console.log('cell render');
     const { cell, row, col } = this.model;

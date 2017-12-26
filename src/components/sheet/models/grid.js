@@ -23,10 +23,57 @@ export default class Grid {
   offsetY = 0;
   offsetX = 0;
 
+  get scrollTop() {
+    const { rows, offsetY } = this;
+    const scrollRows = rows.slice(0, offsetY);
+    return scrollRows.reduce((prev, next) => prev + next, 0);
+  }
+
+  get scrollLeft() {
+    const { columns, offsetX } = this;
+    const scrollColumns = columns.slice(0, offsetX);
+    return scrollColumns.reduce((prev, next) => prev + next, 0);
+  }
+
   selection = {
     begin: { column: -1, row: -1 },
     end: { column: -1, row: -1 }
   };
+
+  get normalizeSelection() {
+    const { begin, end } = this.selection;
+    const normalizeBegin = {}, normalizeEnd = {};
+    if (begin.column < end.column) {
+      normalizeBegin.column = begin.column;
+      normalizeEnd.column = end.column;
+    } else {
+      normalizeBegin.column = end.column;
+      normalizeEnd.column = begin.column;
+    }
+    if (begin.row < end.row) {
+      normalizeBegin.row = begin.row;
+      normalizeEnd.row = end.row;
+    } else {
+      normalizeBegin.row = end.row;
+      normalizeEnd.row = begin.row;
+    }
+    return { begin: normalizeBegin, end: normalizeEnd };
+  }
+
+  get selectRegion() {
+    const { rows = [], columns = [], normalizeSelection } = this;
+    const { begin, end } = normalizeSelection;
+    if (!begin || !end) return;
+    const left = columns.slice(0, begin.column)
+      .reduce((prev, next) => prev + next, 0);
+    const top = rows.slice(0, begin.row)
+      .reduce((prev, next) => prev + next, 0);
+    const width = columns.slice(begin.column, end.column + 1)
+      .reduce((prev, next) => prev + next, 0) + 1;
+    const height = rows.slice(begin.row, end.row + 1)
+      .reduce((prev, next) => prev + next, 0) + 1;
+    return { left, top, width, height };
+  }
 
   select(begin, end = begin) {
     if (begin instanceof Cell) {
@@ -48,12 +95,29 @@ export default class Grid {
   selectRow(rowIndex) {
     if (!utils.isNumber(rowIndex)) rowIndex = this.getRow(rowIndex).index;
     this.select({ row: rowIndex, column: 0 },
-      { row: rowIndex, column: this.columns.length - 1 });
+      { column: this.columns.length - 1, row: rowIndex });
   }
 
   selectAll() {
     this.select({ row: 0, column: 0 },
-      { row: this.rows.length - 1, column: this.columns.length - 1 });
+      { column: this.columns.length - 1, row: this.rows.length - 1 });
+  }
+
+  selectByPoint(beginPoint, endPoint) {
+    const begin = this.getPositionByPoint(beginPoint.x, beginPoint.y);
+    const end = this.getPositionByPoint(endPoint.x, endPoint.y);
+    this.select(begin, end);
+  }
+
+  getPositionByPoint(x = 0, y = 0) {
+    const column = this.columns.find(col => (x -= col.width) <= 0);
+    const row = this.rows.find(row => (y -= row.height) <= 0);
+    return { column: column.index, row: row.index };
+  }
+
+  getCellByPoint(x = 0, y = 0) {
+    const position = this.getPositionByPoint(x, y);
+    return this.getCell(position.row, position.column);
   }
 
   /**
@@ -117,32 +181,32 @@ export default class Grid {
     return utils.isNumber(colIndex) ? this.columns[colIndex] : colIndex;
   }
 
-  getRowAndColumn(rowIndex, colIndex) {
+  getRowAndColumn(colIndex, rowIndex) {
     const row = this.getRow(rowIndex);
     const column = this.getColumn(colIndex);
-    return { row, column };
+    return { column, row };
   }
 
   /**
    * 创建一个行单元格
    */
-  createCell(rowIndex, colIndex) {
-    const { row, column } = this.getRowAndColumn(rowIndex, colIndex);
-    return new Cell(this, row, column);
+  createCell(colIndex, rowIndex) {
+    const { row, column } = this.getRowAndColumn(colIndex, rowIndex);
+    return new Cell(this, column, row);
   }
 
-  getCell(rowIndex, colIndex) {
-    const { row, column } = this.getRowAndColumn(rowIndex, colIndex);
+  getCell(colIndex, rowIndex) {
+    const { row, column } = this.getRowAndColumn(colIndex, rowIndex);
     if (!this.data[row.index]) this.data.set(row.index, []);
     const dataRow = this.data[row.index];
     if (!dataRow[column.index]) dataRow.set(
-      column.index, this.createCell(row, column)
+      column.index, this.createCell(column, row)
     );
     return dataRow[column.index];
   }
 
-  toggleCellEditing(rowIndex, colIndex) {
-    const cell = this.getCell(rowIndex, colIndex);
+  toggleCellEditing(colIndex, rowIndex) {
+    const cell = this.getCell(colIndex, rowIndex);
     if (!cell) return;
     cell.editing = !cell.editing;
   }

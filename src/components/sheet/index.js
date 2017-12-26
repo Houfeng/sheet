@@ -3,18 +3,17 @@ import ReactDOM from 'react-dom';
 import { model } from 'mota';
 import Grid from './models/grid';
 import DockPanel from 'react-dock-panel';
-import Table from './table';
 import ColumnsBar from './columns-bar';
 import RowsBar from './rows-bar';
+import ScrollPanel from './scroll-panel';
+import Table from './table';
 import Selection from './selection';
+import * as utils from './common/utils';
 
 import './index.less';
 
 @model(Grid)
 class Sheet extends Component {
-
-  // 暂不用局部 state，先使用 model，将来有性能问题再处理
-  // state = { offsetY: 0, offsetX: 0 };
 
   onScroll = event => {
     event.stopPropagation();
@@ -39,20 +38,47 @@ class Sheet extends Component {
     }
   };
 
-  get scrollTop() {
-    const { rows, offsetY } = this.model;
-    const scrollRows = rows.slice(0, offsetY);
-    return scrollRows.reduce((prev, next) => prev + next, 0);
+  onMouseDown = event => {
+    const { pageX, pageY } = event;
+    this.begin = this.pagePointToGridPoint({ x: pageX, y: pageY });
   }
 
-  get scrollLeft() {
-    const { columns, offsetX } = this.model;
-    const scrollColumns = columns.slice(0, offsetX);
-    return scrollColumns.reduce((prev, next) => prev + next, 0);
+  pagePointToGridPoint(point) {
+    const { pageX, pageY } = event;
+    const offset = this.cellAreaOffset;
+    const { scrollLeft, scrollTop } = this.model;
+    return {
+      x: point.x - offset.left + scrollLeft,
+      y: point.y - offset.top + scrollTop
+    };
+  }
+
+  onMouseMove = event => {
+    this.trigger('onMove', event);
+  }
+
+  onMouseUp = event => {
+    this.trigger('onEnd', event);
+    this.begin = null;
+    this.end = null;
+  }
+
+  trigger(eventName, event) {
+    if (!this.begin) return;
+    const { pageX, pageY } = event;
+    this.end = this.pagePointToGridPoint({ x: pageX, y: pageY });
+    this.model.selectByPoint(this.begin, this.end);
+  }
+
+  componentDidMount() {
+    if (this.cellArea) {
+      const cellArea = ReactDOM.findDOMNode(this.cellArea);
+      this.cellAreaOffset = utils.getPositionOffset(cellArea);
+    }
   }
 
   render() {
-    const { rows, columns } = this.model;
+    const { rows, columns, scrollTop, scrollLeft } = this.model;
     window.sheet = this;
     console.log('grid render');
     return <DockPanel className="sheet" onWheel={this.onScroll}>
@@ -61,21 +87,26 @@ class Sheet extends Component {
           onClick={event => this.model.selectAll()}>
         </DockPanel>
         <DockPanel className="bar bar-rows">
-          <div style={{ transform: `translateY(${-this.scrollTop}px)` }} >
+          <ScrollPanel scrollTop={scrollTop} >
             <RowsBar model={this.model} />
-          </div>
+          </ScrollPanel>
         </DockPanel>
       </DockPanel>
       <DockPanel dock="top" className="bar bar-columns">
-        <div style={{ transform: `translateX(${-this.scrollLeft}px)` }} >
+        <ScrollPanel scrollLeft={scrollLeft} >
           <ColumnsBar model={this.model} />
-        </div>
+        </ScrollPanel>
       </DockPanel>
       <DockPanel className="cells">
-        <div style={{ transform: `translate(${-this.scrollLeft}px,${-this.scrollTop}px)` }} >
+        <ScrollPanel scrollLeft={scrollLeft}
+          scrollTop={scrollTop}
+          ref={ref => this.cellArea = ref}
+          onMouseDown={this.onMouseDown}
+          onMouseMove={this.onMouseMove}
+          onMouseUp={this.onMouseUp}>
           <Table rows={rows} columns={columns} />
           <Selection model={this.model} />
-        </div>
+        </ScrollPanel>
       </DockPanel>
     </DockPanel>;
   }
