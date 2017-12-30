@@ -27,7 +27,7 @@ export default class ResizeHandle extends PureComponent {
   }
 
   onMouseMove = event => {
-    this.trigger('onMove', event);
+    //this.trigger('onMove', event);
   }
 
   onMouseUp = event => {
@@ -46,12 +46,12 @@ export default class ResizeHandle extends PureComponent {
       width: this.end.x - this.begin.x,
       height: this.end.y - this.begin.y,
     };
-    if (eventHandler) eventHandler(result);
     if (this.initail) {
       const { target, type } = this.props;
       target[type] = this.initail + result[type];
       if (target[type] < 28) target[type] = 28;
     }
+    if (eventHandler) eventHandler(result);
   }
 
 }

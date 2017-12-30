@@ -88,9 +88,11 @@ class Sheet extends Component {
     this.trigger('onEnd', event);
     this.begin = null;
     this.end = null;
-    setTimeout(() => {
-      this.editingBox.focus();
-    }, 100);
+    if (this.editingBox) {
+      setTimeout(() => {
+        this.editingBox.focus();
+      }, 100);
+    }
   }
 
   trigger(eventName, event) {

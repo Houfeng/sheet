@@ -14,7 +14,7 @@ export default class RowsBar extends Component {
             <th style={{ height: row.height }}
               onClick={() => this.model.selectRow(row.index)}>
               {row.index + 1}
-              <ResizeHandle type="height" target={row} />
+              <ResizeHandle type="height" target={row} onEnd={this.onEnd} />
             </th>
           </tr>
         ))}
