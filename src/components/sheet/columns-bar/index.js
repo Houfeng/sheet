@@ -15,12 +15,16 @@ export default class ColumnsBar extends Component {
               onClick={() => this.model.selectColumn(column.index)}
               style={{ width: column.width }}>
               {column.name}
-              <ResizeHandle type="width" target={column} />
+              <ResizeHandle type="width" target={column} onEnd={this.onEnd} />
             </th>
           ))}
         </tr>
       </thead>
     </table>;
+  }
+
+  onEnd = () => {
+    this.model.calcColumnsPosition();
   }
 
 }

@@ -62,17 +62,34 @@ export default class Grid {
     return { begin: normalizeBegin, end: normalizeEnd };
   }
 
+  calcColumnsPosition() {
+    const { columns = [] } = this;
+    let start = 0;
+    columns.forEach(column => {
+      column.left = start;
+      start += column.width;
+    });
+  }
+
+  calcRowsPosition() {
+    const { rows = [] } = this;
+    let start = 0;
+    rows.forEach(row => {
+      row.top = start;
+      start += row.height;
+    });
+  }
+
   get editingRegion() {
     const { rows = [], columns = [], normalizeSelection } = this;
     const { begin } = normalizeSelection;
     if (!begin || begin.column < 0 || begin.row < 0) return;
-    const editingCell = this.getCell(begin.column, begin.row);
-    const left = columns.slice(0, begin.column)
-      .reduce((prev, next) => prev + next, 0);
-    const top = rows.slice(0, begin.row)
-      .reduce((prev, next) => prev + next, 0);
-    const width = editingCell.column.width + 1;
-    const height = editingCell.row.height + 1;
+    const editingColumn = columns[begin.column];
+    const editingRow = rows[begin.row];
+    const left = editingColumn.left;
+    const width = editingColumn.width + 1;
+    const top = editingRow.top;
+    const height = editingRow.height + 1;
     return { left, top, width, height };
   }
 
@@ -94,15 +111,17 @@ export default class Grid {
     const { rows = [], columns = [], normalizeSelection } = this;
     const { begin, end } = normalizeSelection;
     if (!begin || !end) return;
-    const left = columns.slice(0, begin.column)
-      .reduce((prev, next) => prev + next, 0);
-    const top = rows.slice(0, begin.row)
-      .reduce((prev, next) => prev + next, 0);
-    const width = columns.slice(begin.column, end.column + 1)
-      .reduce((prev, next) => prev + next, 0) + 1;
-    const height = rows.slice(begin.row, end.row + 1)
-      .reduce((prev, next) => prev + next, 0) + 1;
-    return { left, top, width, height };
+    const beginColumn = columns[begin.column];
+    const beginRow = rows[begin.row];
+    const endColumn = columns[end.column];
+    const endRow = rows[end.row];
+    if (!beginColumn || !beginRow || !endColumn || !endRow) return;
+    return {
+      left: beginColumn.left,
+      width: endColumn.left + endColumn.width - beginColumn.left,
+      top: beginRow.top,
+      height: endRow.top + endRow.height - beginRow.top
+    };
   }
 
   select(begin, end = begin) {
@@ -227,6 +246,7 @@ export default class Grid {
 
   getCell(colIndex, rowIndex) {
     const { row, column } = this.getRowAndColumn(colIndex, rowIndex);
+    if (!row || !column) return;
     if (!this.data[row.index]) this.data.set(row.index, []);
     const dataRow = this.data[row.index];
     if (!dataRow[column.index]) dataRow.set(

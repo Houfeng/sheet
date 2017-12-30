@@ -45,6 +45,8 @@ class Sheet extends Component {
   }
 
   componentDidMount() {
+    this.model.calcColumnsPosition();
+    this.model.calcRowsPosition();
     this.shortcut = new Shortcut(this.model);
   }
 
@@ -129,8 +131,8 @@ class Sheet extends Component {
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}>
           <Table rows={rows} columns={columns} />
-          <Editing model={this.model} owner={this}
-            ref={ref => this.editing = ref} />
+          {this.model.editing ? <Editing model={this.model} owner={this}
+            ref={ref => this.editing = ref} /> : null}
           <Selection model={this.model} owner={this} />
         </ScrollPanel>
       </DockPanel>

@@ -1,6 +1,7 @@
 export default class Row {
 
   height = 28;
+  top = 0;
 
   constructor(grid) {
     this.__grid = grid;

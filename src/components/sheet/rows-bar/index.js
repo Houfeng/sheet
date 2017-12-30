@@ -22,4 +22,8 @@ export default class RowsBar extends Component {
     </table >;
   }
 
+  onEnd = () => {
+    this.model.calcRowsPosition();
+  }
+
 }

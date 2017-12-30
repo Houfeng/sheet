@@ -1,6 +1,7 @@
 export default class Column {
 
   width = 120;
+  left = 0;
 
   constructor(grid) {
     this.__grid = grid;
