@@ -50,6 +50,7 @@ export default class ResizeHandle extends PureComponent {
     if (this.initail) {
       const { target, type } = this.props;
       target[type] = this.initail + result[type];
+      if (target[type] < 28) target[type] = 28;
     }
   }
 

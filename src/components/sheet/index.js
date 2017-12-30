@@ -8,6 +8,8 @@ import RowsBar from './rows-bar';
 import ScrollPanel from './scroll-panel';
 import Table from './table';
 import Selection from './selection';
+import Editing from './editing';
+import Shortcut from './shortcut';
 import * as utils from './common/utils';
 
 import './index.less';
@@ -38,9 +40,26 @@ class Sheet extends Component {
     }
   };
 
-  onMouseDown = event => {
-    const { pageX, pageY } = event;
-    this.begin = this.pagePointToGridPoint({ x: pageX, y: pageY });
+  onClick = () => {
+    this.model.exitEditing();
+  }
+
+  componentDidMount() {
+    this.shortcut = new Shortcut(this.model);
+  }
+
+  get cellAreaOffset() {
+    if (!this.cellArea) return;
+    if (this._cellAreaOffset) return this._cellAreaOffset;
+    this._cellAreaOffset = utils
+      .getPositionOffset(ReactDOM.findDOMNode(this.cellArea));
+    return this._cellAreaOffset;
+  }
+
+  get editingBox() {
+    if (this._editingBox) return this._editingBox;
+    this._editingBox = ReactDOM.findDOMNode(this.editing);
+    return this._editingBox;
   }
 
   pagePointToGridPoint(point) {
@@ -53,6 +72,12 @@ class Sheet extends Component {
     };
   }
 
+  onMouseDown = event => {
+    const { pageX, pageY } = event;
+    this.begin = this.pagePointToGridPoint({ x: pageX, y: pageY });
+    this.model.exitEditing();
+  }
+
   onMouseMove = event => {
     this.trigger('onMove', event);
   }
@@ -61,6 +86,9 @@ class Sheet extends Component {
     this.trigger('onEnd', event);
     this.begin = null;
     this.end = null;
+    setTimeout(() => {
+      this.editingBox.focus();
+    }, 100);
   }
 
   trigger(eventName, event) {
@@ -68,13 +96,7 @@ class Sheet extends Component {
     const { pageX, pageY } = event;
     this.end = this.pagePointToGridPoint({ x: pageX, y: pageY });
     this.model.selectByPoint(this.begin, this.end);
-  }
-
-  componentDidMount() {
-    if (this.cellArea) {
-      const cellArea = ReactDOM.findDOMNode(this.cellArea);
-      this.cellAreaOffset = utils.getPositionOffset(cellArea);
-    }
+    this.model.exitEditing();
   }
 
   render() {
@@ -101,11 +123,15 @@ class Sheet extends Component {
         <ScrollPanel scrollLeft={scrollLeft}
           scrollTop={scrollTop}
           ref={ref => this.cellArea = ref}
+          onDoubleClick={this.onDblClick}
+          onClick={this.onClick}
           onMouseDown={this.onMouseDown}
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}>
           <Table rows={rows} columns={columns} />
-          <Selection model={this.model} />
+          <Editing model={this.model} owner={this}
+            ref={ref => this.editing = ref} />
+          <Selection model={this.model} owner={this} />
         </ScrollPanel>
       </DockPanel>
     </DockPanel>;

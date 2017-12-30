@@ -20,6 +20,8 @@ export default class Grid {
    */
   rows = [];
 
+  editing = false;
+
   offsetY = 0;
   offsetX = 0;
 
@@ -58,6 +60,34 @@ export default class Grid {
       normalizeEnd.row = begin.row;
     }
     return { begin: normalizeBegin, end: normalizeEnd };
+  }
+
+  get editingRegion() {
+    const { rows = [], columns = [], normalizeSelection } = this;
+    const { begin } = normalizeSelection;
+    if (!begin || begin.column < 0 || begin.row < 0) return;
+    const editingCell = this.getCell(begin.column, begin.row);
+    const left = columns.slice(0, begin.column)
+      .reduce((prev, next) => prev + next, 0);
+    const top = rows.slice(0, begin.row)
+      .reduce((prev, next) => prev + next, 0);
+    const width = editingCell.column.width + 1;
+    const height = editingCell.row.height + 1;
+    return { left, top, width, height };
+  }
+
+  get editingCell() {
+    const { begin } = this.normalizeSelection;
+    if (!begin || begin.column < 0 || begin.row < 0) return {};
+    return this.getCell(begin.column, begin.row);
+  }
+
+  enterEditing() {
+    this.editing = true;
+  }
+
+  exitEditing() {
+    this.editing = false;
   }
 
   get selectRegion() {
