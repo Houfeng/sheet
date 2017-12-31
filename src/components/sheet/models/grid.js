@@ -27,14 +27,14 @@ export default class Grid {
 
   get scrollTop() {
     const { rows, offsetY } = this;
-    const scrollRows = rows.slice(0, offsetY);
-    return scrollRows.reduce((prev, next) => prev + next, 0);
+    const offsetRow = rows[offsetY];
+    return offsetRow.top;
   }
 
   get scrollLeft() {
     const { columns, offsetX } = this;
-    const scrollColumns = columns.slice(0, offsetX);
-    return scrollColumns.reduce((prev, next) => prev + next, 0);
+    const offsetColumn = columns[offsetX];
+    return offsetColumn.left;
   }
 
   selection = {
@@ -65,8 +65,9 @@ export default class Grid {
   calcColumnsPosition() {
     const { columns = [] } = this;
     let start = 0;
-    columns.forEach(column => {
+    columns.forEach((column, index) => {
       column.left = start;
+      column.index = index;
       start += column.width;
     });
   }
@@ -74,8 +75,9 @@ export default class Grid {
   calcRowsPosition() {
     const { rows = [] } = this;
     let start = 0;
-    rows.forEach(row => {
+    rows.forEach((row, index) => {
       row.top = start;
+      rows.index = index;
       start += row.height;
     });
   }
@@ -107,7 +109,7 @@ export default class Grid {
     this.editing = false;
   }
 
-  get selectRegion() {
+  get selectionRegion() {
     const { rows = [], columns = [], normalizeSelection } = this;
     const { begin, end } = normalizeSelection;
     if (!begin || !end) return;
@@ -116,12 +118,11 @@ export default class Grid {
     const endColumn = columns[end.column];
     const endRow = rows[end.row];
     if (!beginColumn || !beginRow || !endColumn || !endRow) return;
-    return {
-      left: beginColumn.left,
-      width: endColumn.left + endColumn.width - beginColumn.left,
-      top: beginRow.top,
-      height: endRow.top + endRow.height - beginRow.top
-    };
+    const left = beginColumn.left;
+    const width = endColumn.left + endColumn.width - beginColumn.left + 1;
+    const top = beginRow.top;
+    const height = endRow.top + endRow.height - beginRow.top + 1;
+    return { left, top, width, height };
   }
 
   select(begin, end = begin) {
@@ -159,9 +160,9 @@ export default class Grid {
   }
 
   getPositionByPoint(x = 0, y = 0) {
-    const column = this.columns.find(col => (x -= col.width) <= 0);
-    const row = this.rows.find(row => (y -= row.height) <= 0);
-    return { column: column.index, row: row.index };
+    const columnIndex = this.columns.findIndex(col => (x -= col.width) <= 0);
+    const rowIndex = this.rows.findIndex(row => (y -= row.height) <= 0);
+    return { column: columnIndex, row: rowIndex };
   }
 
   getCellByPoint(x = 0, y = 0) {

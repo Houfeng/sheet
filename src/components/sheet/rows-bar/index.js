@@ -9,10 +9,10 @@ export default class RowsBar extends Component {
     console.log('RowsBar render');
     return <table>
       <thead>
-        {rows.map(row => (
-          <tr key={row.index}>
+        {rows.map((row, index) => (
+          <tr key={index}>
             <th style={{ height: row.height }}
-              onClick={() => this.model.selectRow(row.index)}>
+              onClick={() => this.model.selectRow(index)}>
               {row.index + 1}
               <ResizeHandle type="height" target={row} onEnd={this.onEnd} />
             </th>

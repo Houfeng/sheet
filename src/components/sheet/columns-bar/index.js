@@ -10,9 +10,9 @@ export default class ColumnsBar extends Component {
     return <table>
       <thead>
         <tr>
-          {columns.map(column => (
-            <th key={column.index}
-              onClick={() => this.model.selectColumn(column.index)}
+          {columns.map((column, index) => (
+            <th key={index}
+              onClick={() => this.model.selectColumn(index)}
               style={{ width: column.width }}>
               {column.name}
               <ResizeHandle type="width" target={column} onEnd={this.onEnd} />

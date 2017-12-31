@@ -11,6 +11,8 @@ import Selection from './selection';
 import Editing from './editing';
 import Shortcut from './shortcut';
 import * as utils from './common/utils';
+import throttle from 'lodash.throttle';
+import { isNull } from 'ntils';
 
 import './index.less';
 
@@ -65,7 +67,6 @@ class Sheet extends Component {
   }
 
   pagePointToGridPoint(point) {
-    const { pageX, pageY } = event;
     const offset = this.cellAreaOffset;
     const { scrollLeft, scrollTop } = this.model;
     return {
@@ -80,8 +81,14 @@ class Sheet extends Component {
     this.model.exitEditing();
   }
 
-  onMouseMove = event => {
+  throttleMouseMove = throttle(event => {
+    event.persist();
     this.trigger('onMove', event);
+  }, 100)
+
+  onMouseMove = event => {
+    event.persist();
+    this.throttleMouseMove(event);
   }
 
   onMouseUp = event => {
@@ -98,6 +105,7 @@ class Sheet extends Component {
   trigger(eventName, event) {
     if (!this.begin) return;
     const { pageX, pageY } = event;
+    if (isNull(pageX) || isNull(pageY)) return;
     this.end = this.pagePointToGridPoint({ x: pageX, y: pageY });
     this.model.selectByPoint(this.begin, this.end);
     this.model.exitEditing();
@@ -133,8 +141,8 @@ class Sheet extends Component {
           onMouseMove={this.onMouseMove}
           onMouseUp={this.onMouseUp}>
           <Table rows={rows} columns={columns} />
-          {this.model.editing ? <Editing model={this.model} owner={this}
-            ref={ref => this.editing = ref} /> : null}
+          <Editing model={this.model} owner={this}
+            ref={ref => this.editing = ref} />
           <Selection model={this.model} owner={this} />
         </ScrollPanel>
       </DockPanel>

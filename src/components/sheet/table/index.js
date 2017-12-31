@@ -5,17 +5,18 @@ import Cell from '../cell';
 
 export default class Table extends PureComponent {
 
-  renderDataCells(row, columns) {
-    return columns.map(col => {
-      const cell = this.model.getCell(col.index, row.index);
-      return <Cell key={col.index} model={{ row, col, cell }} />;
+  renderDataCells(row, columns, rowIndex) {
+    return columns.map((col, colIndex) => {
+      const cell = this.model.getCell(colIndex, rowIndex);
+      return <Cell key={colIndex}
+        model={{ row, col, cell, colIndex, rowIndex }} />;
     });
   }
 
   renderDataRows(rows, columns) {
-    return rows.map(row => (
-      <tr key={row.index}>
-        {this.renderDataCells(row, columns)}
+    return rows.map((row, rowIndex) => (
+      <tr key={rowIndex}>
+        {this.renderDataCells(row, columns, rowIndex)}
       </tr>
     ));
   }

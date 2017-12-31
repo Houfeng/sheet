@@ -1,3 +1,5 @@
+import { isNull } from 'ntils';
+
 export default class Column {
 
   width = 120;
@@ -12,7 +14,12 @@ export default class Column {
   }
 
   get index() {
-    return this.grid.columns.indexOf(this);
+    if (isNull(this.__index)) this.__index = this.grid.columns.indexOf(this);
+    return this.__index;
+  }
+
+  set index(value) {
+    this.__index = value;
   }
 
   get name() {

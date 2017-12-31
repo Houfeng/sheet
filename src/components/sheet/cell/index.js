@@ -8,11 +8,15 @@ export default class Cell extends Component {
 
   render() {
     console.log('cell render');
-    const { cell, row, col } = this.model;
-    return <td key={col.index}
+    const { cell, row, col, colIndex, rowIndex } = this.model;
+    const style = {};
+    if (colIndex == 0) style.height = row.height;
+    if (rowIndex == 0) style.width = col.width;
+    return <td key={colIndex}
       className={classNames({ selected: cell.selected })}
-      style={{ width: col.width, height: row.height }}>
+      style={style}>
       <span className="text">{cell.value}</span>
     </td>;
   }
+
 };
