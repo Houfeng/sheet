@@ -217,7 +217,7 @@ export default class Grid {
       const column = this.createColumn();
       this.columns.push(column);
     });
-    utils.fromTo(0, 23, code => {
+    utils.fromTo(0, 35, code => {
       const row = this.createRow();
       this.rows.push(row);
     });

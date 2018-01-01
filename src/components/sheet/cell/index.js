@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { model, binding } from 'mota';
+import { model } from 'mota';
 import classNames from 'classnames';
 
 @model
-@binding
 export default class CellComponent extends Component {
 
   render() {
