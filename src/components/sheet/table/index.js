@@ -1,14 +1,15 @@
 import React, { PureComponent } from 'react';
 import ReactDOM from 'react-dom';
 import { model } from 'mota';
-import Cell from '../cell';
+import CellComponent from '../cell';
+import './index.less';
 
 export default class Table extends PureComponent {
 
   renderDataCells(row, columns, rowIndex) {
     return columns.map((col, colIndex) => {
       const cell = this.model.getCell(colIndex, rowIndex);
-      return <Cell key={colIndex}
+      return <CellComponent key={colIndex}
         model={{ row, col, cell, colIndex, rowIndex }} />;
     });
   }

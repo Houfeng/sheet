@@ -25,7 +25,8 @@ export default class Selection extends Component {
   }
 
   onKeyDown = (event) => {
-    event.stopPropagation();
+    const { altKey, ctrlKey, shiftKey, metaKey } = event;
+    if (altKey || ctrlKey || shiftKey, metaKey) return;
     this.model.enterEditing();
   }
 

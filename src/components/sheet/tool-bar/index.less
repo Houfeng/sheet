@@ -1,0 +1,36 @@
+@import '../assets/global.less';
+.bar-tool {
+  &,
+  & * {
+    box-sizing: border-box;
+  }
+  @itemSize: 45px;
+  border-bottom: solid 1px #ddd;
+  &,
+  & ul {
+    height: @itemSize;
+    line-height: @itemSize;
+  }
+  ul {
+    @padding: 8px;
+    margin: 0;
+    padding: 0 @itemSize;
+    li {
+      display: inline-block;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      @height: @itemSize - @padding * 2;
+      height: @height;
+      line-height: @height;
+      min-width: @height + 5;
+      text-align: center;
+      cursor: pointer;
+      color: #888;
+      &:hover {
+        outline: @border;
+        color: #111;
+      }
+    }
+  }
+}

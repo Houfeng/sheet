@@ -1,1 +1,12 @@
-.bar-rows {}
+@import '../assets/global.less';
+.bar-rows {
+  text-align: center;
+  table {
+    width: 100% !important;
+    th {
+      height: @barSize;
+      border-top: @border;
+      border-bottom: @border;
+    }
+  }
+}

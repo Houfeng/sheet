@@ -1,20 +1,15 @@
+@import '../assets/global.less';
 .sheet {
-  //基础样式
   &,
   & * {
     box-sizing: border-box;
   }
-  background: #fff;
-  box-shadow: 0 0 8px 1px #ddd;
+  background-color: rgb(247, 247, 247);
   min-height: 300px;
   min-width: 600px;
   position: relative;
   overflow: hidden;
-  @borderColor: rgba( 221, 221, 221, .85);
-  @border: 1px solid @borderColor;
   border: @border;
-  @fontSize: 12px;
-  @font-family: 'Arial, Helvetica, sans-serif';
   user-select: none;
   -webkit-user-select: none;
   -webkit-user-drag: none;
@@ -41,7 +36,6 @@
       overflow: hidden;
     }
   }
-  @barSize: 30px;
   .bar {
     background: rgb(248, 248, 248);
     text-transform: uppercase;
@@ -53,54 +47,12 @@
       color: rgba( 25, 25, 25, .75);
     }
   }
-  .bar-columns {
-    table {
-      th {
-        text-align: center;
-        border-right: @border;
-        border-left: @border;
-        height: @barSize;
-        line-height: @barSize;
-      }
-    }
-    height: @barSize;
-  }
   .bar-side {
     width: @barSize * 1.5;
     .bar-all {
       height: @barSize;
       text-align: center;
       z-index: 20;
-    }
-    .bar-rows {
-      text-align: right;
-      table {
-        width: 100%;
-        th {
-          height: @barSize;
-          border-top: @border;
-          border-bottom: @border;
-        }
-      }
-    }
-  }
-  .cells {
-    table {
-      td {
-        border: 1px solid @borderColor;
-        cursor: cell;
-        word-break: keep-all;
-        white-space: nowrap;
-        .text {
-          font-family: @font-family;
-          font-size: @fontSize;
-          padding: 0 3px;
-          width: 100%;
-          height: 100%;
-          margin: 0;
-          border: 0;
-        }
-      }
     }
   }
   .bar-columns,

@@ -1,0 +1,32 @@
+@import '../assets/global.less';
+.bar-formula {
+  height: @barSize;
+  border-bottom: @border;
+  &>div {
+    @nameWidth: 46px;
+    height: 100%;
+    width: 100%;
+    padding-left: @nameWidth;
+    background-color: #fff;
+    .cell-name,
+    .cell-expr {
+      height: 100%;
+      padding: 0 8px;
+    }
+    .cell-expr {
+      width: 100%;
+      outline: none;
+      border: 0;
+    }
+    .cell-name {
+      width: @nameWidth;
+      position: absolute;
+      line-height: @barSize;
+      left: 0;
+      top: 0;
+      text-align: center;
+      border-right: @border;
+      color: gray;
+    }
+  }
+}

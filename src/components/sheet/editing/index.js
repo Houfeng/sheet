@@ -16,6 +16,8 @@ export default class Editing extends Component {
       onMouseDown={event => event.stopPropagation()}
       onMouseUp={event => event.stopPropagation()}
       onMouseMove={event => event.stopPropagation()}
+      onKeyDown={event => event.stopPropagation()}
+      onKeyUp={event => event.stopPropagation()}
       autoFocus={true}
       tabIndex={0}
       value={editingCell.value}
