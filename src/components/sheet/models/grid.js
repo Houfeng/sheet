@@ -213,11 +213,11 @@ export default class Grid {
    * 创建表格默认的行
    */
   createInitail() {
-    utils.fromTo(0, 11, code => {
+    utils.fromTo(0, 12, code => {
       const column = this.createColumn();
       this.columns.push(column);
     });
-    utils.fromTo(0, 35, code => {
+    utils.fromTo(0, 50, code => {
       const row = this.createRow();
       this.rows.push(row);
     });
